@@ -1,13 +1,13 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.png">
-  <img src="docs/assets/banner-light.png" alt="Banner with an AGENT OPERATIONS eyebrow, the headline &quot;An Implementer&#8217;s Guide to the Whole Operating Method&quot; ending in a blue period, and a signature band showing agent-operations-handbook beside The DuBois Company wordmark.">
+  <img src="docs/assets/banner-light.png" alt="Banner with an AGENT OPERATIONS eyebrow, the headline &quot;An Implementer&#8217;s Guide to the Whole Operating Method&quot; ending in a blue period, and a signature band showing agent-operations-handbook beside the DuBois Company wordmark.">
 </picture>
 
-**The DuBois Company**
+**DuBois Company**
 
 An implementer's guide to the self-improving agent orchestration system the firm runs: the control plane, the knowledge graph project layer, and the maintenance loop that carries what each project learns into the next. The companion repository, [agent-operations-template](https://github.com/DuBois-Company/agent-operations-template), holds the standard, the harness, and a worked example ready to run.
 
-Licensed under [CC BY 4.0](LICENSE). The DuBois Company name, logos, and brand assets are trademarks of The DuBois Company and are not licensed under the repository license.
+Licensed under [CC BY 4.0](LICENSE). The DuBois Company name, logos, and brand assets are trademarks of DuBois Company and are not licensed under the repository license.
 
 ---
 
