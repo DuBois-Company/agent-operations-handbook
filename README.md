@@ -151,8 +151,8 @@ One canonical file holds the full text of every standing standard the operator w
 ```markdown
 # Standing instructions for every session
 
-standards_version: 4
-updated: 2026-08-28
+standards_version: 3
+updated: 2026-04-11
 ```
 
 Rules:
@@ -232,7 +232,7 @@ Each project draws its one or two experiments **from the top of this queue** ins
 
 ### 4.5 Playbooks (`Playbooks/`)
 
-Reusable decompositions. When the gardener sees the same *subgraph shape* (the structural pattern of a project's decomposition — e.g. "two-lane gather stage → judgment filter fan-out → adversarial verify fan-out → programmatic composition under executable gates → batched QA → iterated final-review loop"; anonymized here from the source project) in a **third distinct project**, it drafts a named playbook file describing the decomposition, its unit types, its contract pattern, and the projects that used it, with `status: draft` in its header. Only the user flips a playbook to `approved`. Only approved playbooks may seed a new project's decomposition — and even then they "never override task-specific judgment." The gardener keeps the running shape tally in its memory file.
+Reusable decompositions. When the gardener sees the same *subgraph shape* (the structural pattern of a project's decomposition — an invented illustration: "scrape stage → per-source extraction fan-out → cross-check verify pass → templated assembly under executable gates → sampled QA") in a **third distinct project**, it drafts a named playbook file describing the decomposition, its unit types, its contract pattern, and the projects that used it, with `status: draft` in its header. Only the user flips a playbook to `approved`. Only approved playbooks may seed a new project's decomposition — and even then they "never override task-specific judgment." The gardener keeps the running shape tally in its memory file.
 
 ### 4.6 The gardener's files
 
@@ -279,12 +279,12 @@ nodes:
     inputs: [src/auth.ts]
     evidence: null
     telemetry: {predicted: 0.8, attempts: 0, escalated: no, review: null, spend: null}
-    updated: {at: 2026-08-27, by: fable5}
+    updated: {at: 2026-03-27, by: fable5}
 
   - id: D1
     type: decision
     fact: sessions use JWT with 24 hour expiry
-    evidence: PROGRESS.md entry 2026-08-20
+    evidence: PROGRESS.md entry 2026-03-20
     trust: internal          # internal | tainted
 
   - id: L1
@@ -315,12 +315,12 @@ nodes:
 | `D` | decision | `fact`, `evidence` (prose or node-id list), `trust`, optional `superseded_by` | Permanent. Resolution is written *into* the fact text with a date; superseded decisions stay, marked `superseded_by`. |
 | `L` | lesson | `finding` (observed, with numbers), `action` (imperative reusable rule), `evidence` (node ids), `trust` | Permanent. These are what retrospectives hand to the ledger. |
 | `X` | experiment | `hypothesis`, `prediction`, `applies_to`, `result` (null until scored) | At most 1–2 per project, drawn from the backlog. |
-| `B` | budget | `cap`, `spent` (with an itemizing comment), `status: open \| tripped` | The template says one per project; production evolved to one per phase — an accepted extension. Two phases were user-capped; the third ran with `cap: 0` as an explicit "no cap was set" placeholder, which the gardener flags. Set a real cap. |
+| `B` | budget | `cap`, `spent` (with an itemizing comment), `status: open \| tripped` | The template says one per project; production evolved to one per phase — an accepted extension. Most phases got user-set caps, but one ran with `cap: 0` as an explicit "no cap was set" placeholder, which the gardener flags. Set a real cap. |
 | `A` | artifact | `path`, `fact`, `produced_by`, `evidence` (hashes, counts), `trust`, `status` | Durable outputs; point back at producing tasks. |
 
 **Edges** are plain fields: `depends_on`, `informed_by` (decisions/lessons constraining the work), `assigned_to`, `inputs`, `produces`, `applies_to`. "Tasks with no path between them are candidates for parallel execution."
 
-**Telemetry key:** `predicted` (probability written at dispatch), `attempts`, `escalated`, `review` (outcome), `spend` (rough figure; free-text estimates are fine). Conventions from production: `attempts: 0` plus a comment marks nodes to exclude from calibration; restatements at close keep the old value in a comment (`attempts: 5  # restated at close from 1`). One gap to close deliberately: calibration and the sampled-review streak both key on classes of similar nodes — an *(agent, unit type)* pair — yet the reference schema stores no such field; the auditor classifies nodes at rollup time from their deliverables. Add a `unit_type` field, assigned at planning from a small project-defined vocabulary, and the whole calibration story becomes mechanical.
+**Telemetry key:** `predicted` (probability written at dispatch), `attempts`, `escalated`, `review` (outcome), `spend` (rough figure; free-text estimates are fine). Conventions from production: `attempts: 0` plus a comment marks nodes to exclude from calibration; restatements at close keep the old value in a comment (e.g. `attempts: 3  # restated at close from 1`). One gap to close deliberately: calibration and the sampled-review streak both key on classes of similar nodes — an *(agent, unit type)* pair — yet the reference schema stores no such field; the auditor classifies nodes at rollup time from their deliverables. Add a `unit_type` field, assigned at planning from a small project-defined vocabulary, and the whole calibration story becomes mechanical.
 
 **`telemetry_definitions`** — a closing-session reconciliation block that pins counting rules and canonical figures in prose ("a retry is an attempt beyond the first, counted once per task node; …"), with comments explaining which historical figures they supersede. This is how count discrepancies between the graph, the narrative, and the registry get resolved *without editing history in place*.
 
@@ -347,7 +347,7 @@ The installed block is a sequence of nine bolded rules plus a closing invariant,
 **8. Execute from graph state.** Dispatch a task when every node it `depends_on` is done **and verified**. On failure or new constraints, "replan by editing the graph, never by starting the plan over." Hooks run the executable criteria automatically where installed. The orchestrator reviews every delegate output against the node's acceptance criteria *itself* before marking done, updates telemetry (attempts, escalation, review outcome, rough spend), and logs the verification in the narrative with the node id. Two pressure valves:
 
 - *Sampled review (earned):* "when an agent and task type pair has passed review clean five times running, sample the judgment review at one in three, chosen unpredictably, and reset the pair to full review on any failure, contradiction, or hook alarm; hooks and executable criteria still run on every node, since sampling economizes judgment, never checks."
-- *Budget stop-loss:* add each task's spend to the budget node at review; "when spent crosses the cap while the done fraction lags well behind, stop dispatching, record the state in the narrative, and replan for a cheaper path to the same bar, halting for the user when none exists." (Production nuance: crossing the cap with the done fraction at 100% is not a stop-loss trip — it is an overrun to acknowledge at close.)
+- *Budget stop-loss:* add each task's spend to the budget node at review; "when spent crosses the cap while the done fraction lags well behind, stop dispatching, record the state in the narrative, and replan for a cheaper path to the same bar, halting for the user when none exists." (One boundary case worth stating: crossing the cap with the done fraction at 100% is not a stop-loss trip — it is an overrun to acknowledge at close.)
 
 **9. Consolidate at milestones, then run the retrospective.** *(Editorial: a milestone is a planned phase boundary declared when the graph is locked — a coherent group of task nodes serving one deliverable or concern — closed when all its tasks are done and verified. The per-phase budgets of §5.2 track the same boundaries.)* Promote durable knowledge to permanent nodes. Before archiving spent nodes, read their telemetry and write lesson nodes for the patterns shown: task types the cheaper agent handled cleanly, criteria patterns that caused retries, context slices that proved too thin or too fat, escalations that were unnecessary or came too late. Score every experiment against its prediction — "a win becomes a candidate lesson, a loss becomes a negative lesson recording what was tried, what was predicted, and what happened." Score controls the same way — "a lesson that survives its control re-attests with a fresh date, and one that fails becomes a demotion proposal." Compare predicted vs actual first-attempt outcomes across task nodes; a systematic miss becomes a candidate lesson *about planning itself*. Note any subgraph shape shared with a past project as a playbook candidate. Then the **assumption audit**: "challenge one standing decision node, active lesson, or negative lesson: ask whether it is still true and what would change if it were not, and record the answer." Update the registry line with status, date, and rough rollups; append new hypotheses to the backlog and clear the entries this project ran *(editorial: the sources split this clear between the retrospective and the gardener — §4.4 reconciles; pick one convention)*; move spent nodes under `archived`.
 
@@ -391,7 +391,7 @@ The initializer wires mechanical enforcement so the gates don't depend on the mo
 
 ### 5.7 The narrative log format
 
-Header naming it the companion of the graph ("Entries keyed to node ids"), then sections: `## Rationale`, `## Verification log`, `## Lessons for the prompt builder`, `## Session notes`, plus dated closing-session and gardener-fold sections as they occur. Every entry starts `- YYYY-MM-DD (node-id or label): …`. Corrections are made in place but annotated ("originally said 14; corrected at close against the graph"). Session notes record each session's grounding in a line whose shape the pre-delegation hook can grep — e.g. `- 2026-08-29 — Grounding: read graph.yaml and PROGRESS.md in full; caps confirmed`. The hook's pattern and the entry format are one contract (§11.4, gotcha 6); define them together.
+Header naming it the companion of the graph ("Entries keyed to node ids"), then sections: `## Rationale`, `## Verification log`, `## Lessons for the prompt builder`, `## Session notes`, plus dated closing-session and gardener-fold sections as they occur. Every entry starts `- YYYY-MM-DD (node-id or label): …`. Corrections are made in place but annotated ("originally said 14; corrected at close against the graph"). Session notes record each session's grounding in a line whose shape the pre-delegation hook can grep — e.g. `- 2026-03-29 — Grounding: read graph.yaml and PROGRESS.md in full; caps confirmed`. The hook's pattern and the entry format are one contract (§11.4, gotcha 6); define them together.
 
 ### 5.8 Project instruction files
 
@@ -509,7 +509,7 @@ Every check degrades to a labeled message rather than a crash — an unreadable 
 8. Every few projects, a control run re-tests it with the lesson switched off on one slack task. Survives → `last_verified` refreshes. Fails → demotion proposal, same diff-and-approval path.
 9. Stale beyond a few projects unverified → the gardener proposes decay. Retired lessons leave the active list; negative lessons stay as permanent "don't retry this" markers.
 
-The gate arithmetic matters: **one attestation never changes behavior; two attestations plus explicit human approval do.** Production ran a full project that produced 13 lessons — 7 entered the ledger as candidates (plus one cross-pollinated translation created at intake, for 8 ledger entries), 0 were promoted, and the rest were declined pending stronger evidence, waiting as project lesson nodes. That restraint is the design working, not friction.
+The gate arithmetic matters: **one attestation never changes behavior; two attestations plus explicit human approval do.** Production ran a full project that produced over a dozen lesson nodes — roughly half entered the ledger as candidates (one of them a cross-pollinated translation created at intake), none were promoted, and the rest were declined pending stronger evidence, waiting as project lesson nodes. That restraint is the design working, not friction.
 
 ### 10.2 Life of a project
 
@@ -521,12 +521,12 @@ Access proof → version proof → ground → conflicted-copy sweep → (empty r
 
 ### 10.4 What production taught (observed, not hypothetical)
 
-Unit and stage names below are generalized from the source project.
+Figures below are stated qualitatively; unit and stage names are stand-ins.
 
-- **Budgets tripped and were acknowledged, not hidden.** All three phase budgets ended tripped — two overran their user-set caps; the third had no cap set and was tripped by convention. The close recorded a decision node acknowledging each with reasons, kept the historical caps "as evidence" for the cost lessons, and re-based nothing.
-- **Calibration found a real, actionable systematic miss.** Predictions by *unit type*: image-heavy composition and final-review-clearing units passed 0 of 8 first attempts at a 0.87 mean prediction, while extraction and judgment fan-out units passed 10 of 10 at 0.75–0.78. The drafted meta-lesson: predict by unit type — cap the former class near 0.6 with one full rebuild budgeted, raise the proven classes toward 0.9. It stays DRAFT until a second project's record exists.
-- **Evidence discipline held under temptation.** A batching experiment that would have "obviously" saved cost was scored *inconclusive* because only 1 of 4 batches completed and no spend was logged. It stays queued. The system never counts an unmeasured win.
-- **The auditor audits without touching.** Twelve gardener flags (stale cross-references, an experiment run on the critical path against the slack rule, an unevidenced acceptance claim) were folded onto the exact nodes they name as dated advisory entries — "nothing here changes a status, trust value, acceptance criterion, or lesson."
+- **Budgets tripped and were acknowledged, not hidden.** Every phase budget in the source project ended tripped — most overran their user-set caps, and one had never been given a real cap and was tripped by convention. The close recorded a decision node acknowledging each with its reason, kept the historical caps "as evidence" for the cost lessons, and re-based nothing.
+- **Calibration found a real, actionable systematic miss.** Grouped by unit type, the predictions told two opposite stories: the complex composite units that had to clear final review failed almost every first attempt despite confidently high predictions, while the routine extraction and judgment fan-out units passed essentially every first attempt at more modest ones. The drafted meta-lesson: predict by unit type — cap the fragile class near 0.6 with one full rebuild budgeted, raise the proven classes toward 0.9. It stays DRAFT until a second project's record exists.
+- **Evidence discipline held under temptation.** A batching experiment that would have "obviously" saved cost was scored *inconclusive* because most of its batches never completed and no spend was logged. It stays queued. The system never counts an unmeasured win.
+- **The auditor audits without touching.** The gardener's flags on the closed project (stale cross-references, an experiment run on the critical path against the slack rule, an unevidenced acceptance claim) were folded onto the exact nodes they name as dated advisory entries — "nothing here changes a status, trust value, acceptance criterion, or lesson."
 
 ---
 
@@ -610,4 +610,4 @@ Start without: sampled review (it activates only after 5 clean passes anyway), p
 
 ---
 
-*Distilled August 2026 from a live deployment: canonical standards at standards_version 4, gardener at task_version 5, one completed project (40 task nodes, 5 milestones, 13 lessons, 3 budgets, 12 audit flags) through the full loop.*
+*Distilled in 2026 from a live deployment that carried one full project — several dozen task nodes across multiple milestones, with phase budgets, experiments, and a gardener audit — through the complete loop, closing checklist included.*
